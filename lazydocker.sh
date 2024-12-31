@@ -22,3 +22,10 @@ curl -L -o lazydocker.tar.gz $GITHUB_URL
 tar xzvf lazydocker.tar.gz lazydocker
 install -Dm 755 lazydocker -t "$DIR"
 rm lazydocker lazydocker.tar.gz
+
+# edit .bashrc file
+cat >> ~/.bashrc << EOF
+export PATH=/root/.local/bin:$PATH
+EOF
+source ~/.bashrc
+
