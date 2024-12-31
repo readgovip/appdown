@@ -35,6 +35,10 @@ arch() {
 }
 echo "arch: $(arch)"
 
-curl -sSL https://get.docker.com | bash
+# Install Docker
+docker -v
+if [ $? -ne  0 ]; then
+    curl -sSL https://get.docker.com | bash
+fi
 git clone https://github.com/MHSanaei/3x-ui.git
 cd 3x-ui
