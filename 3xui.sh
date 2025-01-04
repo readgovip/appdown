@@ -41,8 +41,7 @@ if [ $? -ne  0 ]; then
     curl -sSL https://get.docker.com | bash
 fi
 
-git clone https://github.com/MHSanaei/3x-ui.git
-cd 3x-ui
+cd /opt && git clone https://github.com/MHSanaei/3x-ui.git && cd /opt/3x-ui
 docker run -itd \
    -e XRAY_VMESS_AEAD_FORCED=false \
    -v $PWD/db/:/etc/x-ui/ \
