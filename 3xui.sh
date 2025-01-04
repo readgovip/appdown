@@ -48,7 +48,6 @@ docker run -itd \
    -v $PWD/db/:/etc/x-ui/ \
    -v $PWD/cert/:/root/cert/ \
    -p 19853:2053 \   
-   --network=host \
    --restart=unless-stopped \
    --name 3x-ui \
    ghcr.io/mhsanaei/3x-ui:latest
