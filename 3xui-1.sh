@@ -48,6 +48,7 @@ docker run -itd \
    -e XRAY_VMESS_AEAD_FORCED=false \
    -v $PWD/db/:/etc/x-ui/ \
    -v $PWD/cert/:/root/cert/ \
+   -p 19853:2053 \
    --network=host \
    --restart=unless-stopped \
    --name 3x-ui \
