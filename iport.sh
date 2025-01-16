@@ -17,6 +17,16 @@ check_port_forwarding() {
     fi
 }
 
+# 设置端口转发
+turnOnNat(){
+    # 开启端口转发
+    sed -n '/^net.ipv4.ip_forward=1/'p /etc/sysctl.conf | grep -q "net.ipv4.ip_forward=1"
+    if [ $? -ne 0 ]; then
+        echo -e "net.ipv4.ip_forward=1" >> /etc/sysctl.conf && sysctl -p
+		echo "端口转发开启成功。"
+    fi
+}
+
 # 获取参数
 Action=$(echo "$1" | tr '[:upper:]' '[:lower:]')  # 将输入转换为小写
 case "$Action" in
@@ -80,5 +90,9 @@ case "$Action" in
 		echo "##############################当前iptables配置##############################"
         iptables -L PREROUTING -n -t nat --line-number
         iptables -L POSTROUTING -n -t nat --line-number
-	;;
+		;;
+   "open" )
+		echo "##############################启动iptables端口转发##########################"
+		turnOnNat
+		;;
 esac
