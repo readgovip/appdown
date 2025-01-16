@@ -8,12 +8,53 @@ fi
 
 # 获取参数
 Action=$(echo "$1" | tr '[:upper:]' '[:lower:]')  # 将输入转换为小写
-LocalPort=$2
-RemoteIp_Port=$3
 
-# 提取RemoteIp和RemotePort
-RemoteIp=$(echo $RemoteIp_Port | cut -d ':' -f 1)
-RemotePort=$(echo $RemoteIp_Port | cut -d ':' -f 2)
+case "$Action" in
+	"add")
+		# 判断参数有1个
+		if [[ "$#" -le 1 ]]; then
+			echo "用法: $0 Add RemoteIp:RemotePort [LocalPort]"
+			exit 1
+		# 判断参数有2个
+		elif [[ "$#" -le 2 ]]; then
+			# 提取RemoteIp和RemotePort
+			RemoteIp_Port=$2
+			RemoteIp=$(echo $RemoteIp_Port | cut -d ':' -f 1)
+			RemotePort=$(echo $RemoteIp_Port | cut -d ':' -f 2)		
+			LocalPort=$RemotePort
+		# 判断参数有3个
+		else
+			# 提取RemoteIp和RemotePort
+			RemoteIp_Port=$2
+			RemoteIp=$(echo $RemoteIp_Port | cut -d ':' -f 1)
+			RemotePort=$(echo $RemoteIp_Port | cut -d ':' -f 2)		
+			LocalPort=$3
+		fi
+		check_port_forwarding $LocalPort
+		;;
+
+   "del")
+		# 判断参数有1个
+		if [[ "$#" -le 1 ]]; then
+			echo "用法: $0 Del RemoteIp:RemotePort [LocalPort]"
+			exit 1
+		# 判断参数有2个
+		elif [[ "$#" -le 2 ]]; then
+		
+		# 判断参数有3个
+		else
+		
+		fi
+		;;
+   
+   "info")
+		echo "淘宝网"
+		;;
+esac
+
+
+
+
 
 # 检测端口转发规则的函数
 check_port_forwarding() {
@@ -28,12 +69,10 @@ check_port_forwarding() {
     if iptables -t nat -L PREROUTING -n | grep -q "dpt:$port"; then
         echo "端口 $port 已设置转发规则。"
 		exit 1
-    else
-        echo "端口 $port 未设置转发规则。"
     fi
 }
 
-check_port_forwarding $LocalPort
+
 
 # 根据操作选择添加或删除规则
 if [[ "$Action" == "add" ]]; then
