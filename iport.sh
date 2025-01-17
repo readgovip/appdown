@@ -88,8 +88,8 @@ case "$Action" in
 		;;
    "info" )
 		echo "##############################当前iptables配置##############################"
-        iptables -L PREROUTING -n -t nat --line-number
-        iptables -L POSTROUTING -n -t nat --line-number
+		iptables -L PREROUTING -n -t nat --line-number
+		iptables -L POSTROUTING -n -t nat --line-number
 		;;
    "open" )
 		echo "##############################启动iptables端口转发##########################"
