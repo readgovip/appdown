@@ -213,11 +213,12 @@ Uninstall_forwarding(){
 Add_iptables(){
 	#iptables -t nat -A PREROUTING -p "$1" --dport "${local_port}" -j DNAT --to-destination "${forwarding_ip}":"${forwarding_port}"
 	#iptables -t nat -A POSTROUTING -p "$1" -d "${forwarding_ip}" --dport "${forwarding_port_1}" -j SNAT --to-source "${local_ip}"
+	iptables -t nat -A PREROUTING -d "${local_ip}" -p "$1" --dport 1000:65535 -j DNAT --to-destination "${forwarding_ip}"
+	iptables -t nat -A POSTROUTING -d "${forwarding_ip}" -p "$1" --dport 1000:65535 -j SNAT --to "${local_ip}"	
 	echo "iptables -t nat -A PREROUTING -p $1 --dport ${local_port} -j DNAT --to-destination ${forwarding_ip}:${forwarding_port}"
 	echo "iptables -t nat -A POSTROUTING -p $1 -d ${forwarding_ip} --dport ${forwarding_port_1} -j SNAT --to-source ${local_ip}"
 	echo "${local_port}"
 	#iptables -I INPUT -m state --state NEW -m "$1" -p "$1" --dport "${local_port}" -j ACCEPT
-    read
 }
 Del_iptables(){
 	iptables -t nat -D POSTROUTING "$2"
