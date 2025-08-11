@@ -79,10 +79,26 @@ Set_local_port(){
 	[[ -z "${local_port}" ]] && local_port="${forwarding_port}"
 	echo && echo -e "	本地监听端口 : ${Red_font_prefix}${local_port}${Font_color_suffix}" && echo
 }
+
+# 定义函数：获取本机非回环的全局 IPv4 地址（可能多个）
+get_local_ip() {
+    # 使用 ip 命令筛选条件：
+    # -o：每行一个结果（简化输出）
+    # -4：仅 IPv4
+    # addr show：显示地址信息
+    # up：仅接口状态为「up」
+    # primary：仅主 IP 地址（排除辅助地址）
+    # scope global：仅全局可路由地址（排除本地链路地址如 169.254.x.x）
+    # 最后通过 awk 提取并清理 IP（去除子网掩码）
+    ip -o -4 addr show up primary scope global | \
+    awk '{gsub(/\/.*/, "", $4); print $4}'
+}
+
 Set_local_ip(){
 	read -e -p "请输入 本服务器的 网卡IP(注意是网卡绑定的IP，而不仅仅是公网IP，回车自动检测外网IP):" local_ip
 	if [[ -z "${local_ip}" ]]; then
-		local_ip=$(wget -qO- -t1 -T2 ipinfo.io/ip)
+		#local_ip=$(wget -qO- -t1 -T2 ipinfo.io/ip)
+		local_ip=$(get_local_ip)
 		if [[ -z "${local_ip}" ]]; then
 			echo "${Error} 无法检测到本服务器的公网IP，请手动输入"
 			read -e -p "请输入 本服务器的 网卡IP(注意是网卡绑定的IP，而不仅仅是公网IP):" local_ip
