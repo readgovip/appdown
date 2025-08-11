@@ -211,11 +211,13 @@ Uninstall_forwarding(){
 	fi
 }
 Add_iptables(){
-	iptables -t nat -A PREROUTING -d "${local_ip}" -p "$1" --dport 1000:65535 -j DNAT --to-destination "${forwarding_ip}"
-	iptables -t nat -A POSTROUTING -d "${forwarding_ip}" -p "$1" --dport 1000:65535 -j SNAT --to "${local_ip}"
+	#iptables -t nat -A PREROUTING -p "$1" --dport "${local_port}" -j DNAT --to-destination "${forwarding_ip}":"${forwarding_port}"
+	#iptables -t nat -A POSTROUTING -p "$1" -d "${forwarding_ip}" --dport "${forwarding_port_1}" -j SNAT --to-source "${local_ip}"
 	echo "iptables -t nat -A PREROUTING -p $1 --dport ${local_port} -j DNAT --to-destination ${forwarding_ip}:${forwarding_port}"
 	echo "iptables -t nat -A POSTROUTING -p $1 -d ${forwarding_ip} --dport ${forwarding_port_1} -j SNAT --to-source ${local_ip}"
 	echo "${local_port}"
+	#iptables -I INPUT -m state --state NEW -m "$1" -p "$1" --dport "${local_port}" -j ACCEPT
+    read
 }
 Del_iptables(){
 	iptables -t nat -D POSTROUTING "$2"
@@ -247,14 +249,20 @@ Update_Shell(){
 	wget -N --no-check-certificate "https://raw.githubusercontent.com/ToyoDAdoubiBackup/doubi/master/iptables-pf.sh" && chmod +x iptables-pf.sh
 	echo -e "脚本已更新为最新版本[ ${sh_new_ver} ] !(注意：因为更新方式为直接覆盖当前运行的脚本，所以可能下面会提示一些报错，无视即可)" && exit 0
 }
-
 check_sys
 echo && echo -e " iptables 端口转发一键管理脚本 ${Red_font_prefix}[v${sh_ver}]${Font_color_suffix}
-install_iptables
-
-
-
-
+  -- Toyo | doub.io/wlzy-20 --
+  
+ ${Green_font_prefix}0.${Font_color_suffix} 升级脚本
+————————————
+ ${Green_font_prefix}1.${Font_color_suffix} 安装 iptables
+ ${Green_font_prefix}2.${Font_color_suffix} 清空 iptables 端口转发
+————————————
+ ${Green_font_prefix}3.${Font_color_suffix} 查看 iptables 端口转发
+ ${Green_font_prefix}4.${Font_color_suffix} 添加 iptables 端口转发
+ ${Green_font_prefix}5.${Font_color_suffix} 删除 iptables 端口转发
+————————————
+注意：初次使用前请请务必执行 ${Green_font_prefix}1. 安装 iptables${Font_color_suffix}(不仅仅是安装)" && echo
 read -e -p " 请输入数字 [0-5]:" num
 case "$num" in
 	0)
