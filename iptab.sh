@@ -65,7 +65,7 @@ install_iptables(){
 Set_forwarding_port(){
 	read -e -p "请输入 iptables 欲转发至的 远程端口 [1-65535] (支持端口段 如 2333-6666, 被转发服务器):" forwarding_port
 	#[[ -z "${forwarding_port}" ]] && echo "取消..." && exit 1
-	[[ -z "${forwarding_port}" ]] && forwarding_port = "1000-65535"
+	[[ -z "${forwarding_port}" ]] && forwarding_port="1000-65535"
 	echo && echo -e "	欲转发端口 : ${Red_font_prefix}${forwarding_port}${Font_color_suffix}" && echo
 }
 Set_forwarding_ip(){
