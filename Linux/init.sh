@@ -131,8 +131,8 @@ show_tipmsg() {
 	install_date=$(echo "$install_time" | awk '{print $1}')
 	deadline=$(date -d "$install_date +30 days" +"%Y-%m-%d")
 	# 输出结果
-	echo "推测的系统安装日期: $install_date"
-	echo "截止日期（安装日期+30天）: $deadline"
+	echo -e "\033[36m安装日期：\033[0m\033[1;32m$install_date\033[0m"
+	echo -e "\033[36m截止日期：\033[0m\033[1;32m$deadline\033[0m"
 	
 	# 获取当前 BBR 状态
 	CURRENT_ALGO=$(sysctl net.ipv4.tcp_congestion_control | awk '{print $3}')
