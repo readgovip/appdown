@@ -126,6 +126,14 @@ check_network() {
 }
 
 show_tipmsg() {
+	# 获取系统安装日期
+	install_time=$(stat -c %y /var/log/alternatives.log.1)
+	install_date=$(echo "$install_time" | awk '{print $1}')
+	deadline=$(date -d "$install_date +30 days" +"%Y-%m-%d")
+	# 输出结果
+	echo "推测的系统安装日期: $install_date"
+	echo "截止日期（安装日期+30天）: $deadline"
+	
 	# 获取当前 BBR 状态
 	CURRENT_ALGO=$(sysctl net.ipv4.tcp_congestion_control | awk '{print $3}')
 	CURRENT_QDISC=$(sysctl net.core.default_qdisc | awk '{print $3}')
