@@ -24,6 +24,11 @@ for cmd in "${REQUIRED_CMDS[@]}"; do
     fi
 done
 
+if [ ! -f /usr/bin/gping ]; then
+	echo -e "\033[33m缺少依赖：gping，正在安装...\033[0m"
+	curl -L https://github.com/readgovip/appdown/raw/refs/heads/main/Linux/gping.tar.gz -o /tmp/gping.tar.gz && tar -zxvf /tmp/gping.tar.gz -C /tmp/ && mv /tmp/gping /usr/bin/
+fi
+
 # 设置TMUX自动启动,检查并添加tmux自动连接命令到~/.bash_profile
 check_tmux() {
     local target_file=~/.bash_profile  # 目标文件路径（用户的bash配置文件）
