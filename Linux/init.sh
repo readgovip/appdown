@@ -26,7 +26,7 @@ done
 
 if [ ! -f /usr/bin/gping ]; then
 	echo -e "\033[33m缺少依赖：gping，正在安装...\033[0m"
-	curl -L https://github.com/readgovip/appdown/raw/refs/heads/main/Linux/gping.tar.gz -o /tmp/gping.tar.gz && tar -zxf /tmp/gping.tar.gz -C /tmp/ && mv /tmp/gping /usr/bin/
+	curl -s -L https://github.com/readgovip/appdown/raw/refs/heads/main/Linux/gping.tar.gz -o /tmp/gping.tar.gz && tar -zxf /tmp/gping.tar.gz -C /tmp/ >/dev/null 2>&1 && mv /tmp/gping /usr/bin/
 fi
 
 # 设置TMUX自动启动,检查并添加tmux自动连接命令到~/.bash_profile
