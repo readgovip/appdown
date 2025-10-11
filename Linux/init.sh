@@ -13,7 +13,9 @@ if [[ "$ARCH" != "aarch64" && "$ARCH" != "x86_64" ]]; then
     exit 1
 fi
 
+
 # 检查并安装必要的依赖
+GITPROXY="https://host.wxgwxha.eu.org"
 #sudo apt-get update -y && sudo apt-get upgrade -y
 REQUIRED_CMDS=("tmux" "btop" "unzip" "vnstat" "curl" "wget" "dpkg" "awk" "sed" "sysctl" "jq")
 for cmd in "${REQUIRED_CMDS[@]}"; do
@@ -26,7 +28,7 @@ done
 
 if [ ! -f /usr/bin/gping ]; then
 	echo -e "\033[33m缺少依赖：gping，正在安装...\033[0m"
-	curl -s -L https://github.com/readgovip/appdown/raw/refs/heads/main/Linux/gping.tar.gz -o /tmp/gping.tar.gz && tar -zxf /tmp/gping.tar.gz -C /tmp/ >/dev/null 2>&1 && mv /tmp/gping /usr/bin/
+	curl -s -L $GITPROXY/https://github.com/readgovip/appdown/raw/refs/heads/main/Linux/gping.tar.gz -o /tmp/gping.tar.gz && tar -zxf /tmp/gping.tar.gz -C /tmp/ >/dev/null 2>&1 && mv /tmp/gping /usr/bin/
 fi
 
 # 设置TMUX自动启动,检查并添加tmux自动连接命令到~/.bash_profile
