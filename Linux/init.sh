@@ -134,7 +134,7 @@ check_network() {
 
 show_tipmsg() {
 	# 获取系统安装日期
-	install_time=$(stat -c %y /var/log/journal/)
+	install_time=$(stat -c %y /etc/hostname)
 	install_date=$(echo "$install_time" | awk '{print $1}')
 	deadline=$(date -d "$install_date +30 days" +"%Y-%m-%d")
 	# 输出结果
