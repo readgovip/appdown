@@ -16,7 +16,7 @@ fi
 
 # 检查并安装必要的依赖
 GITPROXY="https://host.wxgwxha.eu.org"
-apt update && apt install -y curl sudo > /dev/null 2>&1
+apt update && apt install -y sudo > /dev/null 2>&1
 REQUIRED_CMDS=("curl" "tmux" "btop" "unzip" "vnstat" "wget" "dpkg" "awk" "sed" "sysctl" "jq")
 for cmd in "${REQUIRED_CMDS[@]}"; do
     if ! command -v $cmd &> /dev/null; then
