@@ -39,7 +39,7 @@ clean_sysctl_conf() {
 # 函数：询问是否永久保存更改
 ask_to_save() {
     echo -n -e "\033[36m(｡♥‿♥｡) 要将这些配置永久保存到 $SYSCTL_CONF 吗？(y/n): \033[0m"
-    read -r SAVE
+    SAVE=y
     if [[ "$SAVE" == "y" || "$SAVE" == "Y" ]]; then
         clean_sysctl_conf
         echo "net.core.default_qdisc=$QDISC" | sudo tee -a "$SYSCTL_CONF" > /dev/null
@@ -93,7 +93,7 @@ install_packages() {
     if sudo dpkg -i /tmp/linux-*.deb && update_bootloader; then
         echo -e "\033[1;32m内核安装并配置完成！\033[0m"
         echo -n -e "\033[33m需要重启系统来加载新内核。是否立即重启？ (y/n): \033[0m"
-        read -r REBOOT_NOW
+        REBOOT_NOW=n
         if [[ "$REBOOT_NOW" == "y" || "$REBOOT_NOW" == "Y" ]]; then
             echo -e "\033[36m系统即将重启...\033[0m"
             sudo reboot
