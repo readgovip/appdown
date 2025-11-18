@@ -180,7 +180,7 @@ install_specific_version() {
     done
 
     echo -n -e "\033[36m请输入要安装的版本编号（例如 1）：\033[0m"
-    read -r CHOICE
+    CHOICE=1
     
     if ! [[ "$CHOICE" =~ ^[0-9]+$ ]] || (( CHOICE < 1 || CHOICE > ${#TAG_ARRAY[@]} )); then
         echo -e "\033[31m输入无效编号，取消操作。\033[0m"
@@ -230,7 +230,7 @@ echo -e "\033[33m 6. ⚡ 启用 BBR + CAKE\033[0m"
 echo -e "\033[33m 7. 🗑️  卸载 BBR 内核\033[0m"
 print_separator
 echo -n -e "\033[36m请选择一个操作 (1-7) (｡･ω･｡): \033[0m"
-read -r ACTION
+ACTION=2
 
 case "$ACTION" in
     1)
@@ -240,6 +240,9 @@ case "$ACTION" in
     2)
         echo -e "\033[1;32m(｡･∀･)ﾉﾞ 您选择了安装指定版本的 BBR！\033[0m"
         install_specific_version
+        ALGO="bbr"
+        QDISC="cake"
+        ask_to_save		
         ;;
     3)
         echo -e "\033[1;32m(｡･ω･｡) 检查是否为 BBR v3...\033[0m"
