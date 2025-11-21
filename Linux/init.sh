@@ -31,6 +31,9 @@ if [ ! -f /usr/bin/gping ]; then
 	curl -s -L $GITPROXY/https://github.com/readgovip/appdown/raw/refs/heads/main/Linux/gping.tar.gz -o /tmp/gping.tar.gz && tar -zxf /tmp/gping.tar.gz -C /tmp/ >/dev/null 2>&1 && mv /tmp/gping /usr/bin/
 fi
 
+#安装X-cmd
+eval "$(curl https://get.x-cmd.com)"
+
 # 设置TMUX自动启动,检查并添加tmux自动连接命令到~/.bash_profile
 check_tmux() {
     local target_file=~/.bash_profile  # 目标文件路径（用户的bash配置文件）
