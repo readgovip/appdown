@@ -34,6 +34,9 @@ fi
 #安装X-cmd
 eval "$(curl https://get.x-cmd.com)"
 
+#设置北京时区
+sudo timedatectl set-timezone Asia/Shanghai
+
 # 设置TMUX自动启动,检查并添加tmux自动连接命令到~/.bash_profile
 check_tmux() {
     local target_file=~/.bash_profile
