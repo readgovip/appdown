@@ -36,25 +36,33 @@ eval "$(curl https://get.x-cmd.com)"
 
 # 设置TMUX自动启动,检查并添加tmux自动连接命令到~/.bash_profile
 check_tmux() {
-    local target_file=~/.bash_profile  # 目标文件路径（用户的bash配置文件）
-    local tmux_cmd='tmux attach -t 0 || tmux new -s 0'  # 要检测/添加的tmux命令
-	local tmux_cmdstr='if [ -z "$TMUX" ]; then
+    local target_file=~/.bash_profile
+    local tmux_cmd='tmux attach -t 0 || tmux new -s 0'
+    local tmux_cmdstr='if [ -z "$TMUX" ]; then
     tmux attach -t 0 || tmux new -s 0
 fi'
-    
-	# 1. 确保目标文件存在（不存在则自动创建空文件）
+
+    # 确保目标文件存在
     if [ ! -f "$target_file" ]; then
         touch "$target_file"
-		echo "$tmux_cmdstr" >> "$target_file"
-		echo -e "\033[33mbash_profile文件创建成功!\033[0m"
-	else
-	    # 2. 检查文件中是否已包含目标tmux命令（使用固定字符串匹配，避免正则干扰）
-		if ! grep -qF "$tmux_cmd" "$target_file"; then
-			echo "$tmux_cmdstr" >> "$target_file"
-			echo -e "\033[33mbash_profile文件添加成功!\033[0m"
-		fi
+        # 先写入加载 .bashrc 的行
+        echo '[ -f ~/.bashrc ] && source ~/.bashrc' > "$target_file"
+        echo "$tmux_cmdstr" >> "$target_file"
+        echo -e "\033[33mbash_profile 创建并配置成功（已加入加载 .bashrc）\033[0m"
+    else
+        # 检查是否已存在加载 .bashrc 的行
+        if ! grep -q 'source ~/.bashrc' "$target_file" && ! grep -q '\. ~/.bashrc' "$target_file"; then
+            # 在文件开头插入一行
+            sed -i '1i [ -f ~/.bashrc ] && source ~/.bashrc' "$target_file"
+            echo -e "\033[33m已向 bash_profile 添加加载 .bashrc\033[0m"
+        fi
+        # 检查是否已包含 tmux 命令
+        if ! grep -qF "$tmux_cmd" "$target_file"; then
+            echo "$tmux_cmdstr" >> "$target_file"
+            echo -e "\033[33m已向 bash_profile 添加 tmux 自动启动\033[0m"
+        fi
     fi
-	return 0  # 函数执行成功
+    return 0
 }
 
 #取IP和国家代码
