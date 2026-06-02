@@ -965,7 +965,7 @@ install_x-ui() {
 │  ${blue}x-ui control menu usages (subcommands):${plain}              │
 │                                                       │
 │  ${blue}x-ui${plain}              - Admin Management Script          │
-│  ${blue}x-ui start${plain}        - Start                            │
+│  ${blue}x-ui start${plain}        - Start Readgovip                           │
 │  ${blue}x-ui stop${plain}         - Stop                             │
 │  ${blue}x-ui restart${plain}      - Restart                          │
 │  ${blue}x-ui status${plain}       - Current Status                   │
