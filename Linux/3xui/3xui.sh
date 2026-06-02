@@ -398,7 +398,11 @@ ssl_cert_issue() {
 
     # get the port number for the standalone server
     local WebPort=80
-
+    # read -rp "Please choose which port to use (default is 80): " WebPort
+    if [[ ${WebPort} -gt 65535 || ${WebPort} -lt 1 ]]; then
+        echo -e "${yellow}Your input ${WebPort} is invalid, will use default port 80.${plain}"
+        WebPort=80
+    fi
     echo -e "${green}Will use port: ${WebPort} to issue certificates. Please make sure this port is open.${plain}"
 
     # Stop panel temporarily
@@ -529,7 +533,8 @@ prompt_and_setup_ssl() {
     echo -e "${green}2.${plain} Let's Encrypt for IP Address (6-day validity, auto-renews)"
     echo -e "${green}3.${plain} Custom SSL Certificate (Path to existing files)"
     echo -e "${blue}Note:${plain} Options 1 & 2 require port 80 open. Option 3 requires manual paths."
-
+    # read -rp "Choose an option (default 2 for IP): " ssl_choice
+    # ssl_choice="${ssl_choice// /}" # Trim whitespace
 
     # Default to 2 (IP cert) if input is empty or invalid (not 1 or 3)
     if [[ "$ssl_choice" != "1" && "$ssl_choice" != "3" ]]; then
@@ -564,6 +569,8 @@ prompt_and_setup_ssl() {
 
             # Ask for optional IPv6
             local ipv6_addr=""
+            #read -rp "Do you have an IPv6 address to include? (leave empty to skip): " ipv6_addr
+            #ipv6_addr="${ipv6_addr// /}" # Trim whitespace
 
             # Stop panel if running (port 80 needed)
             if [[ $release == "alpine" ]]; then
@@ -678,7 +685,15 @@ config_after_install() {
             local config_webBasePath="xpp"
             local config_username="admin"
             local config_password="A88033054a"
-            local config_port="65507"
+
+            # read -rp "Would you like to customize the Panel Port settings? (If not, a random port will be applied) [y/n]: " config_confirm
+            if [[ "${config_confirm}" == "y" || "${config_confirm}" == "Y" ]]; then
+                read -rp "Please set up the panel port: " config_port
+                echo -e "${yellow}Your Panel Port is: ${config_port}${plain}"
+            else
+                local config_port="65507"
+                echo -e "${yellow}Generated random port: ${config_port}${plain}"
+            fi
 
             ${xui_folder}/x-ui setting -username "${config_username}" -password "${config_password}" -port "${config_port}" -webBasePath "${config_webBasePath}"
 
@@ -766,41 +781,25 @@ install_x-ui() {
     cd ${xui_folder%/x-ui}/
 
     # Download resources
-    if [ $# == 0 ]; then
-        tag_version=$(curl -Ls "https://api.github.com/repos/MHSanaei/3x-ui/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
-        if [[ ! -n "$tag_version" ]]; then
-            echo -e "${yellow}Trying to fetch version with IPv4...${plain}"
-            tag_version=$(curl -4 -Ls "https://api.github.com/repos/MHSanaei/3x-ui/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
-            if [[ ! -n "$tag_version" ]]; then
-                echo -e "${red}Failed to fetch x-ui version, it may be due to GitHub API restrictions, please try it later${plain}"
-                exit 1
-            fi
-        fi
-        echo -e "Got x-ui latest version: ${tag_version}, beginning the installation..."
-        curl -4fLRo ${xui_folder}-linux-$(arch).tar.gz https://github.com/MHSanaei/3x-ui/releases/download/${tag_version}/x-ui-linux-$(arch).tar.gz
-        if [[ $? -ne 0 ]]; then
-            echo -e "${red}Downloading x-ui failed, please be sure that your server can access GitHub ${plain}"
-            exit 1
-        fi
-    else
-        tag_version=$1
-        tag_version_numeric=${tag_version#v}
-        min_version="2.3.5"
+	
+    tag_version="2.9.4"
+    tag_version_numeric=${tag_version#v}
+    min_version="2.3.5"
 
-        if [[ "$(printf '%s\n' "$min_version" "$tag_version_numeric" | sort -V | head -n1)" != "$min_version" ]]; then
-            echo -e "${red}Please use a newer version (at least v2.3.5). Exiting installation.${plain}"
-            exit 1
-        fi
-
-        url="https://github.com/MHSanaei/3x-ui/releases/download/${tag_version}/x-ui-linux-$(arch).tar.gz"
-        echo -e "Beginning to install x-ui $1"
-        curl -4fLRo ${xui_folder}-linux-$(arch).tar.gz ${url}
-        if [[ $? -ne 0 ]]; then
-            echo -e "${red}Download x-ui $1 failed, please check if the version exists ${plain}"
-            exit 1
-        fi
+    if [[ "$(printf '%s\n' "$min_version" "$tag_version_numeric" | sort -V | head -n1)" != "$min_version" ]]; then
+        echo -e "${red}Please use a newer version (at least v2.3.5). Exiting installation.${plain}"
+        exit 1
     fi
-    curl -4fLRo /usr/bin/x-ui-temp https://raw.githubusercontent.com/MHSanaei/3x-ui/main/x-ui.sh
+
+    url="https://github.com/MHSanaei/3x-ui/releases/download/${tag_version}/x-ui-linux-$(arch).tar.gz"
+    echo -e "Beginning to install x-ui $1"
+    curl -4fLRo ${xui_folder}-linux-$(arch).tar.gz ${url}
+    if [[ $? -ne 0 ]]; then
+        echo -e "${red}Download x-ui $1 failed, please check if the version exists ${plain}"
+        exit 1
+    fi
+    
+	curl -4fLRo /usr/bin/x-ui-temp https://raw.githubusercontent.com/MHSanaei/3x-ui/main/x-ui.sh
     if [[ $? -ne 0 ]]; then
         echo -e "${red}Failed to download x-ui.sh${plain}"
         exit 1
@@ -944,7 +943,7 @@ install_x-ui() {
     echo -e "┌───────────────────────────────────────────────────────┐
 │  ${blue}x-ui control menu usages (subcommands):${plain}              │
 │                                                       │
-│  ${blue}x-ui${plain}              - Admin Management Script          │
+│  ${blue}x-ui${plain}              - Admin Management Script readgovip│
 │  ${blue}x-ui start${plain}        - Start                            │
 │  ${blue}x-ui stop${plain}         - Stop                             │
 │  ${blue}x-ui restart${plain}      - Restart                          │
