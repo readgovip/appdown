@@ -235,13 +235,7 @@ setup_ip_certificate() {
     local reloadCmd="systemctl restart x-ui 2>/dev/null || rc-service x-ui restart 2>/dev/null || true"
 
     # Choose port for HTTP-01 listener (default 80, prompt override)
-    local WebPort=""
-    read -rp "Port to use for ACME HTTP-01 listener (default 80): " WebPort
-    WebPort="${WebPort:-80}"
-    if ! [[ "${WebPort}" =~ ^[0-9]+$ ]] || ((WebPort < 1 || WebPort > 65535)); then
-        echo -e "${red}Invalid port provided. Falling back to 80.${plain}"
-        WebPort=80
-    fi
+    local WebPort="80"
     echo -e "${green}Using port ${WebPort} for standalone validation.${plain}"
     if [[ "${WebPort}" -ne 80 ]]; then
         echo -e "${yellow}Reminder: Let's Encrypt still connects on port 80; forward external port 80 to ${WebPort}.${plain}"
@@ -538,8 +532,8 @@ prompt_and_setup_ssl() {
     echo -e "${green}2.${plain} Let's Encrypt for IP Address (6-day validity, auto-renews)"
     echo -e "${green}3.${plain} Custom SSL Certificate (Path to existing files)"
     echo -e "${blue}Note:${plain} Options 1 & 2 require port 80 open. Option 3 requires manual paths."
-    read -rp "Choose an option (default 2 for IP): " ssl_choice
-    ssl_choice="${ssl_choice// /}" # Trim whitespace
+    # read -rp "Choose an option (default 2 for IP): " ssl_choice
+    ssl_choice="2" # Trim whitespace
 
     # Default to 2 (IP cert) if input is empty or invalid (not 1 or 3)
     if [[ "$ssl_choice" != "1" && "$ssl_choice" != "3" ]]; then
@@ -574,8 +568,8 @@ prompt_and_setup_ssl() {
 
             # Ask for optional IPv6
             local ipv6_addr=""
-            read -rp "Do you have an IPv6 address to include? (leave empty to skip): " ipv6_addr
-            ipv6_addr="${ipv6_addr// /}" # Trim whitespace
+            #read -rp "Do you have an IPv6 address to include? (leave empty to skip): " ipv6_addr
+            #ipv6_addr="" # Trim whitespace
 
             # Stop panel if running (port 80 needed)
             if [[ $release == "alpine" ]]; then
