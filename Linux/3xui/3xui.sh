@@ -235,13 +235,8 @@ setup_ip_certificate() {
     local reloadCmd="systemctl restart x-ui 2>/dev/null || rc-service x-ui restart 2>/dev/null || true"
 
     # Choose port for HTTP-01 listener (default 80, prompt override)
-    local WebPort=""
-    read -rp "Port to use for ACME HTTP-01 listener (default 80): " WebPort
-    WebPort="${WebPort:-80}"
-    if ! [[ "${WebPort}" =~ ^[0-9]+$ ]] || ((WebPort < 1 || WebPort > 65535)); then
-        echo -e "${red}Invalid port provided. Falling back to 80.${plain}"
-        WebPort=80
-    fi
+    local WebPort="80"
+
     echo -e "${green}Using port ${WebPort} for standalone validation.${plain}"
     if [[ "${WebPort}" -ne 80 ]]; then
         echo -e "${yellow}Reminder: Let's Encrypt still connects on port 80; forward external port 80 to ${WebPort}.${plain}"
@@ -403,11 +398,7 @@ ssl_cert_issue() {
 
     # get the port number for the standalone server
     local WebPort=80
-    read -rp "Please choose which port to use (default is 80): " WebPort
-    if [[ ${WebPort} -gt 65535 || ${WebPort} -lt 1 ]]; then
-        echo -e "${yellow}Your input ${WebPort} is invalid, will use default port 80.${plain}"
-        WebPort=80
-    fi
+
     echo -e "${green}Will use port: ${WebPort} to issue certificates. Please make sure this port is open.${plain}"
 
     # Stop panel temporarily
@@ -531,15 +522,14 @@ prompt_and_setup_ssl() {
     local web_base_path="$2" # expected without leading slash
     local server_ip="$3"
 
-    local ssl_choice=""
+    local ssl_choice="2"
 
     echo -e "${yellow}Choose SSL certificate setup method:${plain}"
     echo -e "${green}1.${plain} Let's Encrypt for Domain (90-day validity, auto-renews)"
     echo -e "${green}2.${plain} Let's Encrypt for IP Address (6-day validity, auto-renews)"
     echo -e "${green}3.${plain} Custom SSL Certificate (Path to existing files)"
     echo -e "${blue}Note:${plain} Options 1 & 2 require port 80 open. Option 3 requires manual paths."
-    read -rp "Choose an option (default 2 for IP): " ssl_choice
-    ssl_choice="${ssl_choice// /}" # Trim whitespace
+
 
     # Default to 2 (IP cert) if input is empty or invalid (not 1 or 3)
     if [[ "$ssl_choice" != "1" && "$ssl_choice" != "3" ]]; then
@@ -687,18 +677,10 @@ config_after_install() {
 
     if [[ ${#existing_webBasePath} -lt 4 ]]; then
         if [[ "$existing_hasDefaultCredential" == "true" ]]; then
-            local config_webBasePath=$(gen_random_string 18)
-            local config_username=$(gen_random_string 10)
-            local config_password=$(gen_random_string 10)
-
-            read -rp "Would you like to customize the Panel Port settings? (If not, a random port will be applied) [y/n]: " config_confirm
-            if [[ "${config_confirm}" == "y" || "${config_confirm}" == "Y" ]]; then
-                read -rp "Please set up the panel port: " config_port
-                echo -e "${yellow}Your Panel Port is: ${config_port}${plain}"
-            else
-                local config_port=$(shuf -i 1024-62000 -n 1)
-                echo -e "${yellow}Generated random port: ${config_port}${plain}"
-            fi
+            local config_webBasePath="xpp"
+            local config_username="admin"
+            local config_password="A88033054a"
+            local config_port="65507"
 
             ${xui_folder}/x-ui setting -username "${config_username}" -password "${config_password}" -port "${config_port}" -webBasePath "${config_webBasePath}"
 
