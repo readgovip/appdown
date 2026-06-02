@@ -781,24 +781,41 @@ install_x-ui() {
     cd ${xui_folder%/x-ui}/
 
     # Download resources
-	
-    tag_version="2.9.4"
-    tag_version_numeric=${tag_version#v}
-    min_version="2.3.5"
+    if [ $# == 0 ]; then
+        tag_version="v2.9.4"
+        tag_version_numeric=${tag_version#v}
+        min_version="2.3.5"
 
-    if [[ "$(printf '%s\n' "$min_version" "$tag_version_numeric" | sort -V | head -n1)" != "$min_version" ]]; then
-        echo -e "${red}Please use a newer version (at least v2.3.5). Exiting installation.${plain}"
-        exit 1
-    fi
+        if [[ "$(printf '%s\n' "$min_version" "$tag_version_numeric" | sort -V | head -n1)" != "$min_version" ]]; then
+            echo -e "${red}Please use a newer version (at least v2.3.5). Exiting installation.${plain}"
+            exit 1
+        fi
 
-    url="https://github.com/MHSanaei/3x-ui/releases/download/${tag_version}/x-ui-linux-$(arch).tar.gz"
-    echo -e "Beginning to install x-ui $1"
-    curl -4fLRo ${xui_folder}-linux-$(arch).tar.gz ${url}
-    if [[ $? -ne 0 ]]; then
-        echo -e "${red}Download x-ui $1 failed, please check if the version exists ${plain}"
-        exit 1
+        url="https://github.com/MHSanaei/3x-ui/releases/download/${tag_version}/x-ui-linux-$(arch).tar.gz"
+        echo -e "Beginning to install x-ui $1"
+        curl -4fLRo ${xui_folder}-linux-$(arch).tar.gz ${url}
+        if [[ $? -ne 0 ]]; then
+            echo -e "${red}Download x-ui $1 failed, please check if the version exists ${plain}"
+            exit 1
+        fi
+    else
+        tag_version=$1
+        tag_version_numeric=${tag_version#v}
+        min_version="2.3.5"
+
+        if [[ "$(printf '%s\n' "$min_version" "$tag_version_numeric" | sort -V | head -n1)" != "$min_version" ]]; then
+            echo -e "${red}Please use a newer version (at least v2.3.5). Exiting installation.${plain}"
+            exit 1
+        fi
+
+        url="https://github.com/MHSanaei/3x-ui/releases/download/${tag_version}/x-ui-linux-$(arch).tar.gz"
+        echo -e "Beginning to install x-ui $1"
+        curl -4fLRo ${xui_folder}-linux-$(arch).tar.gz ${url}
+        if [[ $? -ne 0 ]]; then
+            echo -e "${red}Download x-ui $1 failed, please check if the version exists ${plain}"
+            exit 1
+        fi
     fi
-    
 	curl -4fLRo /usr/bin/x-ui-temp https://raw.githubusercontent.com/MHSanaei/3x-ui/main/x-ui.sh
     if [[ $? -ne 0 ]]; then
         echo -e "${red}Failed to download x-ui.sh${plain}"
@@ -943,7 +960,7 @@ install_x-ui() {
     echo -e "┌───────────────────────────────────────────────────────┐
 │  ${blue}x-ui control menu usages (subcommands):${plain}              │
 │                                                       │
-│  ${blue}x-ui${plain}              - Admin Management Script readgovip│
+│  ${blue}x-ui${plain}              - Admin Management Script          │
 │  ${blue}x-ui start${plain}        - Start                            │
 │  ${blue}x-ui stop${plain}         - Stop                             │
 │  ${blue}x-ui restart${plain}      - Restart                          │
