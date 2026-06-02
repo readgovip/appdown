@@ -960,7 +960,7 @@ install_x-ui() {
     echo -e "┌───────────────────────────────────────────────────────┐
 │  ${blue}x-ui control menu usages (subcommands):${plain}              │
 │                                                       │
-│  ${blue}x-ui${plain}              - Admin Management Script          │
+│  ${blue}x-ui${plain}              - Admin Management Script readgovip│
 │  ${blue}x-ui start${plain}        - Start                            │
 │  ${blue}x-ui stop${plain}         - Stop                             │
 │  ${blue}x-ui restart${plain}      - Restart                          │
