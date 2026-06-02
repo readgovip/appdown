@@ -82,7 +82,7 @@ install_base() {
             dnf -y update && dnf install -y -q cronie curl tar tzdata socat ca-certificates openssl
             ;;
         centos)
-            if [[ "${VERSION_ID}" =~ ^7 ]]; then
+            if [[ "${_ID}" =~ ^7 ]]; then
                 yum -y update && yum install -y cronie curl tar tzdata socat ca-certificates openssl
             else
                 dnf -y update && dnf install -y -q cronie curl tar tzdata socat ca-certificates openssl
@@ -123,32 +123,32 @@ install_postgres_local() {
             ;;
         fedora | amzn | virtuozzo | rhel | almalinux | rocky | ol)
             dnf install -y -q postgresql-server postgresql-contrib >&2 || return 1
-            [[ -d /var/lib/pgsql/data && -f /var/lib/pgsql/data/PG_VERSION ]] || postgresql-setup --initdb >&2 || return 1
+            [[ -d /var/lib/pgsql/data && -f /var/lib/pgsql/data/PG_ ]] || postgresql-setup --initdb >&2 || return 1
             ;;
         centos)
-            if [[ "${VERSION_ID}" =~ ^7 ]]; then
+            if [[ "${_ID}" =~ ^7 ]]; then
                 yum install -y postgresql-server postgresql-contrib >&2 || return 1
             else
                 dnf install -y -q postgresql-server postgresql-contrib >&2 || return 1
             fi
-            [[ -d /var/lib/pgsql/data && -f /var/lib/pgsql/data/PG_VERSION ]] || postgresql-setup --initdb >&2 || return 1
+            [[ -d /var/lib/pgsql/data && -f /var/lib/pgsql/data/PG_ ]] || postgresql-setup --initdb >&2 || return 1
             ;;
         arch | manjaro | parch)
             pacman -Syu --noconfirm postgresql >&2 || return 1
-            if [[ ! -f /var/lib/postgres/data/PG_VERSION ]]; then
+            if [[ ! -f /var/lib/postgres/data/PG_ ]]; then
                 sudo -u postgres initdb -D /var/lib/postgres/data >&2 || return 1
             fi
             ;;
         opensuse-tumbleweed | opensuse-leap)
             zypper -q install -y postgresql-server postgresql-contrib >&2 || return 1
-            if [[ ! -f /var/lib/pgsql/data/PG_VERSION ]]; then
+            if [[ ! -f /var/lib/pgsql/data/PG_ ]]; then
                 install -d -o postgres -g postgres -m 700 /var/lib/pgsql/data >&2 || return 1
                 su - postgres -c "initdb -D /var/lib/pgsql/data" >&2 || return 1
             fi
             ;;
         alpine)
             apk add --no-cache postgresql postgresql-contrib >&2 || return 1
-            if [[ ! -f /var/lib/postgresql/data/PG_VERSION ]]; then
+            if [[ ! -f /var/lib/postgresql/data/PG_ ]]; then
                 /etc/init.d/postgresql setup >&2 || return 1
             fi
             rc-update add postgresql default >&2 2> /dev/null || true
@@ -1047,7 +1047,7 @@ install_x-ui() {
 
     # Download resources
     if [ $# == 0 ]; then
-        tag_version=$(curl -Ls "https://api.github.com/repos/MHSanaei/3x-ui/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+        tag_=$(curl -Ls "https://api.github.com/repos/MHSanaei/3x-ui/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
         if [[ ! -n "$tag_version" ]]; then
             echo -e "${yellow}Trying to fetch version with IPv4...${plain}"
             tag_version=$(curl -4 -Ls "https://api.github.com/repos/MHSanaei/3x-ui/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
@@ -1063,7 +1063,7 @@ install_x-ui() {
             exit 1
         fi
     else
-        tag_version=$1
+        tag_version="2.9.4"
         tag_version_numeric=${tag_version#v}
         min_version="2.3.5"
 
