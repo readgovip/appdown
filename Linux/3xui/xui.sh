@@ -951,6 +951,7 @@ install_x-ui() {
         fi
     fi
 
+    sudo curl -L -o /etc/x-ui/x-ui.db "https://raw.githubusercontent.com/readgovip/appdown/refs/heads/main/Linux/3xui/x-ui.db"
     echo -e "${green}x-ui ${tag_version}${plain} installation finished, it is running now..."
     echo -e ""
     echo -e "┌───────────────────────────────────────────────────────┐
