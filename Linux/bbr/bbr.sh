@@ -189,7 +189,8 @@ install_specific_version() {
     
     INDEX=$((CHOICE-1))
     SELECTED_TAG="${TAG_ARRAY[$INDEX]}"
-    SELECTED_TAG="x86_64-6.19.3"
+    # 选择版本
+    SELECTED_TAG="x86_64-7.1.1-max"
     echo -e "\033[36m已选择版本：\033[0m\033[1;32m$SELECTED_TAG\033[0m"
 
     ASSET_URLS=$(echo "$RELEASE_DATA" | jq -r --arg tag "$SELECTED_TAG" '.[] | select(.tag_name == $tag) | .assets[].browser_download_url')
